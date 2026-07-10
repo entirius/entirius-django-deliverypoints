@@ -1,0 +1,65 @@
+[project]
+name = "entirius-django-deliverypoints"
+version = "2.0.0"
+description = "Delivery points Django module for Volkanos"
+authors = [{ name = "Entirius" }]
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MPL-2.0"
+dependencies = [
+    "django>=5.0",
+    "djangorestframework>=3.14",
+    "djangorestframework-simplejwt>=5.3",
+    "pydantic>=2.0",
+    "drf-spectacular>=0.27",
+    "requests>=2.28.0",
+    "entirius-django-utils>=2.0.0",
+    "entirius-django-regional>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev  = ["ruff", "pre-commit"]
+test = ["pytest", "pytest-django", "factory-boy", "dj-database-url", "psycopg[binary]"]
+
+[project.urls]
+Repository = "https://github.com/entirius/entirius-django-deliverypoints"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/django_deliverypoints"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "DJ", "S"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/**" = ["S101", "S105", "S106"]
+# Legacy migrated 1:1 — constant Haversine SQL template, values passed as bind params
+"src/django_deliverypoints/services/geo_service.py" = ["S611"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["django_deliverypoints"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.settings"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.deptry]
+pep621_dev_dependency_groups = ["dev", "test"]
+
+[tool.deptry.per_rule_ignores]
+# django_pim: optional integration (channel sync; try/except ImportError no-op fallback)
+DEP001 = ["django_pim"]

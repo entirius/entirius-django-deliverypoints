@@ -1,0 +1,10 @@
+app_label: django_deliverypoints
+groups:
+  - name: delivery-points
+    title: "Delivery Points"
+    models:
+      - DeliveryPointType
+      - DeliveryPoint
+      - DeliveryPointChannel
+      - DeliveryPointT9N
+      - ImportLog
