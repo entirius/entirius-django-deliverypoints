@@ -113,6 +113,19 @@ class TestPublicPointList:
         assert active.pk in result_ids
         assert len(result_ids) == 1
 
+    def test_list_page_size_above_admin_cap(self, api_client, channel):
+        # Arrange — map zoom-out needs the whole base in one request (>100 cap)
+        dp_type = DeliveryPointTypeFactory()
+        DeliveryPointFactory.create_batch(120, type=dp_type)
+
+        # Act
+        response = api_client.get(_points_url(channel.idx), {"page_size": 2000})
+
+        # Assert
+        assert response.status_code == 200
+        assert len(response.data["results"]) == 120
+        assert response.data["next"] is None
+
     def test_list_returns_global_and_channel_points(self, api_client, channel):
         # Arrange
         global_point = DeliveryPointFactory(is_active=True)

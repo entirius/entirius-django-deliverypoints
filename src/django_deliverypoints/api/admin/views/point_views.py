@@ -282,12 +282,26 @@ class PointViewSet(viewsets.ViewSet):
         except ValidationError as exc:
             raise_pydantic_as_drf(exc)
 
+        dp_type = None
+        if data.type_id is not None:
+            try:
+                dp_type = type_service.get_type_by_pk(pk=data.type_id)
+            except ObjectDoesNotExist:
+                return Response(
+                    {"detail": f"DeliveryPointType {data.type_id} not found."}, status=status.HTTP_400_BAD_REQUEST
+                )
+
         channel_ids = data.channel_ids
-        updates = data.model_dump(exclude={"channel_ids"}, exclude_none=True)
+        updates = data.model_dump(exclude={"channel_ids", "type_id"}, exclude_none=True)
         try:
-            point = point_service.update_point(pk=int(pk), channel_ids=channel_ids, **updates)
+            point = point_service.update_point(pk=int(pk), channel_ids=channel_ids, type=dp_type, **updates)
         except ObjectDoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        except IntegrityError:
+            return Response(
+                {"detail": "Point with this code already exists for the target type."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(_build_response(point))
