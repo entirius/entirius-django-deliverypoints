@@ -1,6 +1,6 @@
 [project]
 name = "entirius-django-deliverypoints"
-version = "2.0.0"
+version = "2.1.0"
 description = "Delivery points Django module for Volkanos"
 authors = [{ name = "Entirius" }]
 readme = "README.md"
