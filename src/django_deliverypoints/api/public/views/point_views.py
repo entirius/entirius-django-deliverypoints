@@ -12,7 +12,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from django_deliverypoints.api.admin.pagination import AdminPageNumberPagination
+from django_deliverypoints.api.public.pagination import PublicPageNumberPagination
 from django_deliverypoints.models import DeliveryPoint, DeliveryPointChannel
 from django_deliverypoints.schemas.responses.point import PublicPointListResponse, PublicPointResponse
 from django_deliverypoints.services import channel_service, point_service
@@ -110,7 +110,7 @@ class PublicPointViewSet(viewsets.ViewSet):
 
     authentication_classes = []
     permission_classes = [AllowAny]
-    pagination_class = AdminPageNumberPagination
+    pagination_class = PublicPageNumberPagination
 
     def list(self, request: Request, channel_idx: str = "", **kwargs) -> Response:
         search = request.query_params.get("search")
