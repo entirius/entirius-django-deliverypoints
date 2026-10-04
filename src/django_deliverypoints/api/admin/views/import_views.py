@@ -25,6 +25,7 @@ class ImportView(APIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
+    access_area = "deliverypoints.points"
     parser_classes = [MultiPartParser]
 
     @extend_schema(

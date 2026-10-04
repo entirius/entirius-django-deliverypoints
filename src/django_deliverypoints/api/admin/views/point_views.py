@@ -96,6 +96,7 @@ class PointViewSet(viewsets.ViewSet):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
+    access_area = "deliverypoints.points"
 
     @extend_schema(
         summary="List delivery points",
