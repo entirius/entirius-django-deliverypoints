@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from importlib.util import find_spec
+
 import dj_database_url
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -29,6 +31,9 @@ INSTALLED_APPS = [
     "django_regional",
     "django_deliverypoints",
 ]
+# django_access when importable (zeno): tests/test_access_ownership.py proves the access declarations.
+if find_spec("django_access"):
+    INSTALLED_APPS.append("django_access")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
