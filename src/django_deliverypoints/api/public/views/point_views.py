@@ -21,6 +21,10 @@ _CHANNEL_IDX_PARAM = OpenApiParameter(
     name="channel_idx", location=OpenApiParameter.PATH, description="Channel identifier", required=True, type=str
 )
 
+_ID_PARAM = OpenApiParameter(
+    name="id", location=OpenApiParameter.PATH, description="Delivery point ID", required=True, type=int
+)
+
 _SEARCH_PARAM = OpenApiParameter(
     name="search",
     location=OpenApiParameter.QUERY,
@@ -101,7 +105,7 @@ def _build_public_point_response(
         summary="Retrieve delivery point",
         description="Returns a single active delivery point by ID, scoped to the given channel.",
         tags=["Public Delivery Points"],
-        parameters=[_CHANNEL_IDX_PARAM, _LANGUAGE_PARAM],
+        parameters=[_CHANNEL_IDX_PARAM, _ID_PARAM, _LANGUAGE_PARAM],
         responses={200: PublicPointResponse, 404: {"description": "Point not found or not accessible in this channel"}},
     ),
 )
