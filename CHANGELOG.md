@@ -6,6 +6,8 @@
   entirius-django-access defaults; behaviour unchanged).
 - OpenAPI: pagination URL examples use `https://api.example.com` instead of `localhost`. Metadata only.
 - OpenAPI: the `id` path parameter of the public delivery point is described. Metadata only.
+- Optional sibling apps that are installed but not enabled no longer crash imports (`RuntimeError` is caught like
+  `ImportError`).
 
 ## 2.1.0 — 2026-08-06
 

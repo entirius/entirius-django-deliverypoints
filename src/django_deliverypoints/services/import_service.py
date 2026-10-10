@@ -83,11 +83,12 @@ def import_csv(*, file: IO[str], type_code: str, mode: str, channel=None, source
             "Points without coordinates in CSV will be imported without lat/lng."
         )
 
+    # RuntimeError: an app that is installed but not in INSTALLED_APPS raises it on model import, not ImportError.
     try:
         from django_regional.models import Country as _Country
 
         _country_model = _Country
-    except ImportError:
+    except (ImportError, RuntimeError):
         _country_model = None
 
     for row in rows:

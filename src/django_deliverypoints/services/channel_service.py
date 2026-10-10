@@ -47,9 +47,10 @@ def sync_channels_from_pim() -> int:
     Creates or updates local channels keyed by idx.
     Returns count of synced channels.
     """
+    # RuntimeError: an app that is installed but not in INSTALLED_APPS raises it on model import, not ImportError.
     try:
         from django_pim.models import Channel
-    except ImportError:
+    except (ImportError, RuntimeError):
         logger.info("django_pim not installed, skipping channel sync")
         return 0
 
