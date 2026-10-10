@@ -24,7 +24,7 @@ class DPChannelListResponse(BaseModel):
     next: str | None = Field(
         None,
         description="URL of next page",
-        examples=["http://localhost:8000/api/deliverypoints/v2/admin/channels/?page=2"],
+        examples=["https://api.example.com/api/deliverypoints/v2/admin/channels/?page=2"],
     )
     previous: str | None = Field(None, description="URL of previous page", examples=[None])
     results: list[DPChannelResponse] = Field(description="List of channels")

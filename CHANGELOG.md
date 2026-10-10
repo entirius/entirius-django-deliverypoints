@@ -4,6 +4,7 @@
 
 - Access: the module declares its own access areas on its AppConfig and its admin views (copied from the
   entirius-django-access defaults; behaviour unchanged).
+- OpenAPI: pagination URL examples use `https://api.example.com` instead of `localhost`. Metadata only.
 
 ## 2.1.0 — 2026-08-06
 
