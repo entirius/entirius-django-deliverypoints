@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Delivery points Django module for Volkanos — distribution `entirius-django-deliverypoints`,
+Delivery points Django module of Entirius — distribution `entirius-django-deliverypoints`,
 Django app `django_deliverypoints`. Carrier pickup points and custom locations with geo search,
 CSV import, translations and channel scoping.
 
@@ -13,6 +13,8 @@ CSV import, translations and channel scoping.
 | `make fix` | auto-fix lint + format |
 | `make test` | test suite (pytest + pytest-django) |
 
+Tests need PostgreSQL: set `DATABASE_URL` (see `tests/settings.py`).
+
 ## Conventions
 
 - English only: code, docs, commits, branches, PRs.
@@ -24,6 +26,7 @@ CSV import, translations and channel scoping.
 - Access: areas live on the AppConfig (`access_areas`, `access_route_rules`), every admin view carries
   `access_area`; a new admin route without one fails `tests/test_access_ownership.py`.
 - Default: do not commit — git is the user's call.
+- No AI attribution in commits or PR descriptions.
 
 ## Architecture
 
@@ -35,7 +38,17 @@ CSV import, translations and channel scoping.
 - `schemas/` — pydantic request/response models.
 - `api/` — `admin/` (v2, JWT + IsAdminUser) and `public/` (v2, AllowAny, channel-scoped).
 
+- `management/commands/` — `import_deliverypoints` (CSV import), `sync_dp_channels` (channels from PIM).
+- `urls.py` — mounts `api/deliverypoints/v2/admin/` and `api/deliverypoints/v2/`.
+
 Layer rule: `API → Services → Models → DB`. No ORM in views.
+
+| Topic | Where |
+|---|---|
+| Overview | `docs/index.md` |
+| Data model | `docs/data-model.md`, `docs/erd.md` |
+| CSV import | `docs/import.md` |
+| Settings and defaults | `docs/configuration.md` |
 
 ## Gotchas
 
