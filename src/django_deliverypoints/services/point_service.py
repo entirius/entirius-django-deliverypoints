@@ -105,6 +105,25 @@ def create_point(
 
 
 _CARRIER_EDITABLE_FIELDS = frozenset({"is_active"})
+# Plain columns only: the type and the channels change through their own arguments of update_point.
+_EDITABLE_FIELDS = frozenset(
+    {
+        "name",
+        "latitude",
+        "longitude",
+        "street",
+        "city",
+        "state",
+        "post_code",
+        "country",
+        "phone",
+        "email",
+        "website",
+        "opening_hours",
+        "hint",
+        "is_active",
+    }
+)
 
 
 def update_point(*, pk: int, channel_ids: list[int] | None = None, type=None, **kwargs) -> DeliveryPoint:
@@ -113,6 +132,8 @@ def update_point(*, pk: int, channel_ids: list[int] | None = None, type=None, **
     Carrier points are managed by the import system: only is_active can change.
     Type can only be changed to another custom (non-carrier) type.
     """
+    if invalid := set(kwargs) - _EDITABLE_FIELDS:
+        raise ValueError(f"Fields not editable via update_point: {sorted(invalid)}")
     point = DeliveryPoint.objects.select_related("type").get(pk=pk)
     if point.type.is_carrier:
         blocked = set(kwargs) - _CARRIER_EDITABLE_FIELDS

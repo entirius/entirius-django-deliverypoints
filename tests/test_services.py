@@ -523,6 +523,18 @@ class TestUpdatePoint:
         # Assert
         assert channel.pk in list(result.channels.values_list("pk", flat=True))
 
+    @pytest.mark.parametrize("field", ["type_id", "id", "created_at", "channels"])
+    def test_update_point_refuses_a_field_outside_the_whitelist(self, field):
+        # Arrange: a foreign-key column would repoint the type past the carrier rule
+        point = DeliveryPointFactory(name="Kept")
+        carrier = DeliveryPointTypeFactory(is_carrier=True)
+
+        # Act / Assert
+        with pytest.raises(ValueError, match="not editable"):
+            update_point(pk=point.pk, name="Changed", **{field: carrier.pk})
+        point.refresh_from_db()
+        assert (point.name, point.type.is_carrier) == ("Kept", False)
+
     def test_update_point_change_type(self):
         # Arrange
         point = DeliveryPointFactory()

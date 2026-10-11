@@ -9,6 +9,12 @@
 - Optional sibling apps that are installed but not enabled no longer crash imports (`RuntimeError` is caught like
   `ImportError`).
 
+### Security
+
+- `point_service.update_point` applies only the listed point fields and refuses any other keyword with a
+  `ValueError` (it set every keyword on the model, a foreign-key column included). The admin API is unchanged: its
+  request schema sends only those fields.
+
 ## 2.1.0 — 2026-08-06
 
 - Custom point type change support and a carrier update guard.
