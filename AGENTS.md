@@ -58,6 +58,9 @@ Layer rule: `API → Services → Models → DB`. No ORM in views.
 - Haversine geo search is application-level (no PostGIS); for >100k points add a bounding-box pre-filter.
 - Carrier types (`is_carrier=True`) are read-only — update/delete raise `ValueError`, API returns 403.
 - Translation fallback chain: requested language → `channel.default_language` → base point fields.
-- `channel_service.sync_channels_from_pim()` is a no-op (returns 0) when `django_pim` is not installed.
+- `channel_service.sync_channels_from_pim()` is a no-op (returns 0) when `django_pim` is not installed or not in
+  `INSTALLED_APPS`.
+- `point_service.update_point()` applies only the fields of `_EDITABLE_FIELDS`; any other keyword raises
+  `ValueError`. The type and the channels change through their own arguments.
 - Geocoding is optional — empty `DELIVERYPOINTS_GOOGLE_GEOCODING_API_KEY` = disabled, not broken.
 - `code` on point create is auto-generated from `name` if not provided (slugify + `-2`, `-3` dedup).
