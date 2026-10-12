@@ -104,9 +104,45 @@ def create_point(
     return DeliveryPoint.objects.select_related("type").prefetch_related("channels").get(pk=point.pk)
 
 
-def update_point(*, pk: int, channel_ids: list[int] | None = None, **kwargs) -> DeliveryPoint:
-    """Update point fields. Returns updated instance with type pre-fetched."""
-    point = DeliveryPoint.objects.get(pk=pk)
+_CARRIER_EDITABLE_FIELDS = frozenset({"is_active"})
+# Plain columns only: the type and the channels change through their own arguments of update_point.
+_EDITABLE_FIELDS = frozenset(
+    {
+        "name",
+        "latitude",
+        "longitude",
+        "street",
+        "city",
+        "state",
+        "post_code",
+        "country",
+        "phone",
+        "email",
+        "website",
+        "opening_hours",
+        "hint",
+        "is_active",
+    }
+)
+
+
+def update_point(*, pk: int, channel_ids: list[int] | None = None, type=None, **kwargs) -> DeliveryPoint:
+    """Update point fields. Returns updated instance with type pre-fetched.
+
+    Carrier points are managed by the import system: only is_active can change.
+    Type can only be changed to another custom (non-carrier) type.
+    """
+    if invalid := set(kwargs) - _EDITABLE_FIELDS:
+        raise ValueError(f"Fields not editable via update_point: {sorted(invalid)}")
+    point = DeliveryPoint.objects.select_related("type").get(pk=pk)
+    if point.type.is_carrier:
+        blocked = set(kwargs) - _CARRIER_EDITABLE_FIELDS
+        if blocked or type is not None or channel_ids is not None:
+            raise ValueError("Carrier points are managed by the import system; only is_active can be changed.")
+    if type is not None:
+        if type.is_carrier:
+            raise ValueError("Cannot change point type to a carrier type.")
+        point.type = type
     for field, value in kwargs.items():
         setattr(point, field, value)
     point.save()

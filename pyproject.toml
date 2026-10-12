@@ -1,7 +1,21 @@
 [project]
 name = "entirius-django-deliverypoints"
-version = "2.0.0"
-description = "Delivery points Django module for Volkanos"
+version = "2.2.0"
+description = "Delivery points for Entirius: pickup points and parcel lockers for checkout, imported and served per channel"
+keywords = ["django", "delivery", "pickup-points", "shipping", "ecommerce", "entirius"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Django",
+    "Framework :: Django :: 5.2",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP",
+]
 authors = [{ name = "Entirius" }]
 readme = "README.md"
 requires-python = ">=3.11"
@@ -22,7 +36,11 @@ dev  = ["ruff", "pre-commit"]
 test = ["pytest", "pytest-django", "factory-boy", "dj-database-url", "psycopg[binary]"]
 
 [project.urls]
+Homepage = "https://docs.entirius.com/"
+Documentation = "https://github.com/entirius/entirius-django-deliverypoints/tree/develop/docs"
 Repository = "https://github.com/entirius/entirius-django-deliverypoints"
+Changelog = "https://github.com/entirius/entirius-django-deliverypoints/blob/develop/CHANGELOG.md"
+Issues = "https://github.com/entirius/entirius-django-deliverypoints/issues"
 
 [build-system]
 requires = ["hatchling"]

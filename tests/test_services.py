@@ -523,6 +523,68 @@ class TestUpdatePoint:
         # Assert
         assert channel.pk in list(result.channels.values_list("pk", flat=True))
 
+    @pytest.mark.parametrize("field", ["type_id", "id", "created_at", "channels"])
+    def test_update_point_refuses_a_field_outside_the_whitelist(self, field):
+        # Arrange: a foreign-key column would repoint the type past the carrier rule
+        point = DeliveryPointFactory(name="Kept")
+        carrier = DeliveryPointTypeFactory(is_carrier=True)
+
+        # Act / Assert
+        with pytest.raises(ValueError, match="not editable"):
+            update_point(pk=point.pk, name="Changed", **{field: carrier.pk})
+        point.refresh_from_db()
+        assert (point.name, point.type.is_carrier) == ("Kept", False)
+
+    def test_update_point_change_type(self):
+        # Arrange
+        point = DeliveryPointFactory()
+        new_type = DeliveryPointTypeFactory(is_carrier=False)
+
+        # Act
+        result = update_point(pk=point.pk, type=new_type)
+
+        # Assert
+        assert result.type.pk == new_type.pk
+
+    def test_update_point_type_to_carrier_raises(self):
+        # Arrange
+        point = DeliveryPointFactory()
+        carrier_type = DeliveryPointTypeFactory(is_carrier=True)
+
+        # Act / Assert
+        with pytest.raises(ValueError, match="carrier type"):
+            update_point(pk=point.pk, type=carrier_type)
+
+    def test_update_carrier_point_fields_raises(self):
+        # Arrange
+        carrier_type = DeliveryPointTypeFactory(is_carrier=True)
+        point = DeliveryPointFactory(type=carrier_type)
+
+        # Act / Assert
+        with pytest.raises(ValueError, match="import system"):
+            update_point(pk=point.pk, street="Hacked St 1")
+
+    def test_update_carrier_point_type_raises(self):
+        # Arrange
+        carrier_type = DeliveryPointTypeFactory(is_carrier=True)
+        point = DeliveryPointFactory(type=carrier_type)
+        custom_type = DeliveryPointTypeFactory(is_carrier=False)
+
+        # Act / Assert
+        with pytest.raises(ValueError, match="import system"):
+            update_point(pk=point.pk, type=custom_type)
+
+    def test_update_carrier_point_is_active_succeeds(self):
+        # Arrange
+        carrier_type = DeliveryPointTypeFactory(is_carrier=True)
+        point = DeliveryPointFactory(type=carrier_type, is_active=True)
+
+        # Act — soft-disable is the one allowed carrier update
+        result = update_point(pk=point.pk, is_active=False)
+
+        # Assert
+        assert result.is_active is False
+
 
 @pytest.mark.django_db
 class TestDeletePoint:

@@ -12,13 +12,17 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from django_deliverypoints.api.admin.pagination import AdminPageNumberPagination
+from django_deliverypoints.api.public.pagination import PublicPageNumberPagination
 from django_deliverypoints.models import DeliveryPoint, DeliveryPointChannel
 from django_deliverypoints.schemas.responses.point import PublicPointListResponse, PublicPointResponse
 from django_deliverypoints.services import channel_service, point_service
 
 _CHANNEL_IDX_PARAM = OpenApiParameter(
     name="channel_idx", location=OpenApiParameter.PATH, description="Channel identifier", required=True, type=str
+)
+
+_ID_PARAM = OpenApiParameter(
+    name="id", location=OpenApiParameter.PATH, description="Delivery point ID", required=True, type=int
 )
 
 _SEARCH_PARAM = OpenApiParameter(
@@ -101,7 +105,7 @@ def _build_public_point_response(
         summary="Retrieve delivery point",
         description="Returns a single active delivery point by ID, scoped to the given channel.",
         tags=["Public Delivery Points"],
-        parameters=[_CHANNEL_IDX_PARAM, _LANGUAGE_PARAM],
+        parameters=[_CHANNEL_IDX_PARAM, _ID_PARAM, _LANGUAGE_PARAM],
         responses={200: PublicPointResponse, 404: {"description": "Point not found or not accessible in this channel"}},
     ),
 )
@@ -110,7 +114,7 @@ class PublicPointViewSet(viewsets.ViewSet):
 
     authentication_classes = []
     permission_classes = [AllowAny]
-    pagination_class = AdminPageNumberPagination
+    pagination_class = PublicPageNumberPagination
 
     def list(self, request: Request, channel_idx: str = "", **kwargs) -> Response:
         search = request.query_params.get("search")

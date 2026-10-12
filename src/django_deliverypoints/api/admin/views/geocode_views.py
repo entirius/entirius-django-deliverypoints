@@ -23,6 +23,8 @@ class GeocodeSearchView(APIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
+    access_area = "deliverypoints.points"
+    access_levels = {"POST": "read"}
 
     @extend_schema(
         tags=["Delivery Points"],

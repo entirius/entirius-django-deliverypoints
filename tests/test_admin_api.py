@@ -697,6 +697,80 @@ class TestPointUpdate:
         assert response.status_code == 200
         assert ch.pk in response.json()["channel_ids"]
 
+    def test_update_point_change_type(self, authenticated_client):
+        # Arrange
+        point = DeliveryPointFactory()
+        new_type = DeliveryPointTypeFactory(is_carrier=False)
+
+        # Act
+        response = authenticated_client.patch(point_detail_url(point.pk), {"type_id": new_type.pk}, format="json")
+
+        # Assert
+        assert response.status_code == 200
+        assert response.json()["type"]["id"] == new_type.pk
+        point.refresh_from_db()
+        assert point.type_id == new_type.pk
+
+    def test_update_point_type_to_carrier_returns_400(self, authenticated_client):
+        # Arrange
+        point = DeliveryPointFactory()
+        carrier_type = DeliveryPointTypeFactory(is_carrier=True)
+
+        # Act
+        response = authenticated_client.patch(point_detail_url(point.pk), {"type_id": carrier_type.pk}, format="json")
+
+        # Assert
+        assert response.status_code == 400
+        assert "carrier" in response.json()["detail"].lower()
+
+    def test_update_point_type_not_found_returns_400(self, authenticated_client):
+        # Arrange
+        point = DeliveryPointFactory()
+
+        # Act
+        response = authenticated_client.patch(point_detail_url(point.pk), {"type_id": 999999}, format="json")
+
+        # Assert
+        assert response.status_code == 400
+
+    def test_update_point_type_code_collision_returns_400(self, authenticated_client):
+        # Arrange — same code exists under the target type
+        target_type = DeliveryPointTypeFactory(is_carrier=False)
+        DeliveryPointFactory(type=target_type, code="DUP-001")
+        point = DeliveryPointFactory(code="DUP-001")
+
+        # Act
+        response = authenticated_client.patch(point_detail_url(point.pk), {"type_id": target_type.pk}, format="json")
+
+        # Assert
+        assert response.status_code == 400
+        assert "already exists" in response.json()["detail"]
+
+    def test_update_carrier_point_fields_returns_400(self, authenticated_client):
+        # Arrange
+        carrier_type = DeliveryPointTypeFactory(is_carrier=True)
+        point = DeliveryPointFactory(type=carrier_type)
+
+        # Act
+        response = authenticated_client.patch(point_detail_url(point.pk), {"street": "Hacked St 1"}, format="json")
+
+        # Assert
+        assert response.status_code == 400
+        assert "import system" in response.json()["detail"]
+
+    def test_update_carrier_point_is_active_succeeds(self, authenticated_client):
+        # Arrange
+        carrier_type = DeliveryPointTypeFactory(is_carrier=True)
+        point = DeliveryPointFactory(type=carrier_type, is_active=True)
+
+        # Act — soft-disable is the one allowed carrier update
+        response = authenticated_client.patch(point_detail_url(point.pk), {"is_active": False}, format="json")
+
+        # Assert
+        assert response.status_code == 200
+        point.refresh_from_db()
+        assert point.is_active is False
+
 
 # ---------------------------------------------------------------------------
 # 11. TestPointDelete

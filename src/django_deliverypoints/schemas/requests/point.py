@@ -68,6 +68,11 @@ class DeliveryPointCreateRequest(BaseModel):
 
 
 class DeliveryPointUpdateRequest(BaseModel):
+    type_id: int | None = Field(
+        None,
+        description="DeliveryPointType primary key. Only custom (non-carrier) target types allowed.",
+        examples=[1],
+    )
     name: str | None = Field(
         None,
         description="Display name of the delivery point",

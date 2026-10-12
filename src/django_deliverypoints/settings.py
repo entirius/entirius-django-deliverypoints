@@ -14,3 +14,8 @@ IMPORT_BATCH_SIZE = getattr(settings, "DELIVERYPOINTS_IMPORT_BATCH_SIZE", 1000)
 
 # Google Maps Geocoding API key (empty = geocoding disabled)
 GOOGLE_GEOCODING_API_KEY = getattr(settings, "DELIVERYPOINTS_GOOGLE_GEOCODING_API_KEY", "")
+
+# View cache for public endpoints (same service-level switches as django-matrix).
+# Default ON/OFF: OFF, Default TTL: 15 min
+USE_CACHED_VIEWS = getattr(settings, "USE_CACHED_VIEWS", False)
+CACHE_TTL = getattr(settings, "CACHE_TTL", 60 * 15)
