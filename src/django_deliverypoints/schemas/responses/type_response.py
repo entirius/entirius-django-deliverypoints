@@ -27,7 +27,7 @@ class DeliveryPointTypeListResponse(BaseModel):
     next: str | None = Field(
         None,
         description="URL of next page",
-        examples=["http://localhost:8000/api/deliverypoints/v2/admin/types/?page=2"],
+        examples=["https://api.example.com/api/deliverypoints/v2/admin/types/?page=2"],
     )
     previous: str | None = Field(None, description="URL of previous page", examples=[None])
     results: list[DeliveryPointTypeResponse] = Field(description="List of delivery point types")
@@ -48,7 +48,9 @@ class PublicTypeResponse(BaseModel):
 class PublicTypeListResponse(BaseModel):
     count: int = Field(description="Total number of active types", examples=[5])
     next: str | None = Field(
-        None, description="URL of next page", examples=["http://localhost:8000/api/deliverypoints/v2/ch/types/?page=2"]
+        None,
+        description="URL of next page",
+        examples=["https://api.example.com/api/deliverypoints/v2/ch/types/?page=2"],
     )
     previous: str | None = Field(None, description="URL of previous page", examples=[None])
     results: list[PublicTypeResponse] = Field(description="List of active delivery point types")

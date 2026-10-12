@@ -4,6 +4,16 @@
 
 - Access: the module declares its own access areas on its AppConfig and its admin views (copied from the
   entirius-django-access defaults; behaviour unchanged).
+- OpenAPI: pagination URL examples use `https://api.example.com` instead of `localhost`. Metadata only.
+- OpenAPI: the `id` path parameter of the public delivery point is described. Metadata only.
+- Optional sibling apps that are installed but not enabled no longer crash imports (`RuntimeError` is caught like
+  `ImportError`).
+
+### Security
+
+- `point_service.update_point` applies only the listed point fields and refuses any other keyword with a
+  `ValueError` (it set every keyword on the model, a foreign-key column included). The admin API is unchanged: its
+  request schema sends only those fields.
 
 ## 2.1.0 — 2026-08-06
 
