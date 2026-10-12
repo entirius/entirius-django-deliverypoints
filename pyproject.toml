@@ -1,6 +1,6 @@
 [project]
 name = "entirius-django-deliverypoints"
-version = "2.1.0"
+version = "2.2.0"
 description = "Delivery points for Entirius: pickup points and parcel lockers for checkout, imported and served per channel"
 keywords = ["django", "delivery", "pickup-points", "shipping", "ecommerce", "entirius"]
 classifiers = [
